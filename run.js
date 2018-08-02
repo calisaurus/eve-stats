@@ -24,7 +24,13 @@ async function run() {
     })
   })
 
-  return write('all-kills.json', JSON.stringify(kills, null, 2))
+  console.log('Total ship kills:', kills.length)
+  await write('all-kills.json', JSON.stringify(kills, null, 2))
+
+  const filteredKills = kills.filter(kill => kill.ship_type_id !== 670 && kill.ship_type_id !== 33328)
+
+  console.log('Filtered ship kills:', filteredKills.length)
+  await write('all-kills-filtered.json', JSON.stringify(filteredKills, null, 2))
 }
 
 async function downloadPage(number) {
