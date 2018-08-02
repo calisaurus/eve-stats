@@ -58,6 +58,13 @@ async function run() {
 
   console.log('Filtered ship kills:', filteredKills.length)
   await write('all-kills-filtered.json', JSON.stringify(filteredKills, null, 2))
+
+  const filteredKillsTable = [['killmail id', 'killmail time', 'ship type id', 'ship name']]
+  filteredKills.forEach(kill => {
+    filteredKillsTable.push([kill.killmail_id, kill.killmail_time, kill.ship_type_id, kill.ship_name])
+  })
+
+  await write('all-kills-filtered.csv', filteredKillsTable.map(row => row.join(',')).join('\n'))
 }
 
 async function downloadPage(number) {
