@@ -1,5 +1,5 @@
 console.log("EVE Stats")
-const { fetch } = require('promise-path')
+const { fetch, write } = require('promise-path')
 
 let promise = (async () => {
   const apiContents = await fetch({
@@ -8,5 +8,6 @@ let promise = (async () => {
       'User-Agent': `Cali Stats Bot`
     }
   })
-  console.log('Remote file:', apiContents)
+  await write('ora-page-one.json', JSON.stringify(JSON.parse(apiContents), null, 2))
+  console.log('Wrote data to file', apiContents.length,"bytes")
 })()
