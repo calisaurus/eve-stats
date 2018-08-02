@@ -3,6 +3,27 @@ const { fetch, write, read } = require('promise-path')
 const fs = require('fs')
 const zeropad = require('./zeropad')
 
+const esiCache = {}
+
+async function lookupESIName(id) {
+  let esiData = esiCache[id]
+  if (!esiData) {
+    console.log('Looking up ESI data for type:', id)
+    const apiContents = await fetch({
+      url: `https://esi.tech.ccp.is/v3/universe/types/${id}/`,
+      headers: {
+        'User-Agent': `Cali Stats Bot`
+      }
+    })
+    esiData = JSON.parse(apiContents)
+    esiCache[id] = esiData
+  }
+  else {
+    console.log('Found cached ESI data for type:', id, ':', esiData.name)
+  }
+  return esiData.name
+}
+
 async function run() {
   const pages = []
   while (pages.length < 40) {
@@ -28,6 +49,12 @@ async function run() {
   await write('all-kills.json', JSON.stringify(kills, null, 2))
 
   const filteredKills = kills.filter(kill => kill.ship_type_id !== 670 && kill.ship_type_id !== 33328)
+
+  const unprocessedKills = [].concat(filteredKills)
+  while (unprocessedKills.length > 0) {
+    const kill = unprocessedKills.pop()
+    kill.ship_name = await lookupESIName(kill.ship_type_id)
+  }
 
   console.log('Filtered ship kills:', filteredKills.length)
   await write('all-kills-filtered.json', JSON.stringify(filteredKills, null, 2))
