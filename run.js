@@ -4,12 +4,17 @@ const fs = require('fs')
 const zeropad = require('./zeropad')
 
 async function run() {
-  return downloadPage(1)
+  const pages = []
+  while (pages.length < 40) {
+    let pageData = await downloadPage(pages.length +1)
+    pages.push(pageData)
+  }
+
 }
 
 async function downloadPage(number) {
   //check to see if ora-page-one.json already exists
-  let filename = `./ora-page-${number}.json`
+  let filename = `./ora-page-${zeropad(number)}.json`
   if (fs.existsSync(filename)) {
     console.log(`Skipping ${filename}`)
   } else {
@@ -19,8 +24,10 @@ async function downloadPage(number) {
         'User-Agent': `Cali Stats Bot`
       }
     })
-    await write(filename, JSON.stringify(JSON.parse(apiContents), null, 2))
-    console.log('Wrote data to file', apiContents.length, "bytes")
+    const pageData = JSON.parse(apiContents)
+    await write(filename, JSON.stringify(pageData, null, 2))
+    console.log('Wrote data to file', filename, apiContents.length, "bytes")
+    return pageData
   }
 }
 
