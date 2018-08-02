@@ -1,5 +1,5 @@
 console.log("EVE Stats")
-const { fetch, write } = require('promise-path')
+const { fetch, write, read } = require('promise-path')
 const fs = require('fs')
 const zeropad = require('./zeropad')
 
@@ -12,13 +12,28 @@ async function run() {
     pages.push(pageData)
   }
 
+  const kills = []
+  pages.forEach(page => {
+    page.forEach(kill => {
+      const killDetails = {
+        killmail_id: kill.killmail_id,
+        killmail_time: kill.killmail_time,
+        ship_type_id: kill.victim.ship_type_id
+      }
+      kills.push(killDetails)
+    })
+  })
+
+  return write('all-kills.json', JSON.stringify(kills, null, 2))
 }
 
 async function downloadPage(number) {
   //check to see if ora-page-one.json already exists
   let filename = `./ora-page-${zeropad(number)}.json`
   if (fs.existsSync(filename)) {
-    console.log(`Skipping ${filename}`)
+    console.log(`Already cached ${filename}`)
+    const contents = await read(filename, 'utf8')
+    return JSON.parse(contents)
   } else {
     const apiContents = await fetch({
       url: `https://zkillboard.com/api/kills/regionID/12000001/page/${number}/`,
