@@ -6,7 +6,9 @@ const zeropad = require('./zeropad')
 async function run() {
   const pages = []
   while (pages.length < 40) {
+    let startTime = Date.now()
     let pageData = await downloadPage(pages.length +1)
+    console.log('That took', (Date.now()-startTime)/1000, 'seconds')
     pages.push(pageData)
   }
 
