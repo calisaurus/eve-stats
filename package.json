@@ -1,0 +1,23 @@
+{
+  "name": "eve-stats",
+  "version": "1.0.0",
+  "description": "A project for collecting public-facing stats for the game EVE Online and making pretty graphs from them.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hannahbunce/eve-stats.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hannahbunce/eve-stats/issues"
+  },
+  "homepage": "https://github.com/hannahbunce/eve-stats#readme",
+  "dependencies": {
+    "promise-path": "^1.2.7"
+  }
+}
